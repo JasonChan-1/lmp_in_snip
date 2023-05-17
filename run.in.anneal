@@ -1,0 +1,34 @@
+# 模拟退火
+variable		trant equal 273.15
+
+units        	real
+dimension	 	3
+boundary	 	p p p
+atom_style		full
+
+velocity 		all create 300.0 4928459 rot yes dist gaussian
+timestep		0.1
+# 升温
+fix 			1 all nvt temp $(v_trant+25) $(v_trant+275) $(100*dt)
+thermo 			100
+thermo_style 	custom step temp pe etotal press
+run 			100000
+unfix 			1
+# 持续
+fix 			1 all nvt temp $(v_trant+275) $(v_trant+275) $(100*dt)
+thermo 			100
+thermo_style 	custom step temp pe etotal press
+run 			100000
+unfix 			1
+# 降温
+fix 			1 all nvt temp $(v_trant+275) $(v_trant+25) $(100*dt)
+# fix           1 all nve
+# fix 			2 all temp/rescale 100 $(v_trant+275) $(v_trant+15) 0.02 0.5
+thermo 			100
+thermo_style 	custom step temp pe etotal press
+run 			100000
+unfix 			1
+
+# 能量最小化
+minimize 		1.0e-4 1.0e-6 100 1000
+min_style 		cg
