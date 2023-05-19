@@ -4,7 +4,17 @@ variable		trant equal 273.15
 units        	real
 dimension	 	3
 boundary	 	p p p
+neighbor		2.0 bin
+neigh_modify 	every 1 delay 0 check yes
 atom_style		full
+
+include			"system.in.init"
+read_data		"system.data"
+include			"system.in.settings"
+
+# 能量最小化
+minimize 		1.0e-4 1.0e-6 100 1000
+min_style 		cg
 
 velocity 		all create 300.0 4928459 rot yes dist gaussian
 timestep		0.1
@@ -32,3 +42,5 @@ unfix 			1
 # 能量最小化
 minimize 		1.0e-4 1.0e-6 100 1000
 min_style 		cg
+
+write_data		aftanneal.data
